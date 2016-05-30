@@ -11,7 +11,7 @@ in units $$um^-2$$ * sec^-1).
 
 ![Example ordered state](https://github.com/igor25/microtubules/blob/master/results/example_results_ordered_state_stable.gif)
 ![Example ordered to disordered ](https://github.com/igor25/microtubules/blob/master/results/example_results_order_to_disorder.gif)
-![Example disordered state]https://github.com/igor25/microtubules/blob/master/results/example_results_disorder_state.gif)
+![Example disordered state](https://github.com/igor25/microtubules/blob/master/results/example_results_disorder_state.gif)
 
 ## Rod dynamics
 
