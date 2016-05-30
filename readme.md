@@ -1,13 +1,11 @@
 # Microtubule dynamics simulation
 
-The goal was to simulate the growth of polymers called microtubules within
-living plant cells, and investigate if there are conditions under which a set
-of randomly growing microtubules might form a stable ordered state.
+_(dedicated to late prof. Chris Henley at Cornell who supervised this project)_
 
-This code simulates the microtubules as a number of rigid rods. These rods
-grow from the front end at a rate `vplus` (um/min) and shrink from the rear
-end at a rate `vmin`. New rods are generated on the screen at a rate of `rInj`
-in units $$um^-2$$ * sec^-1).
+Microtubules are structural polymers inside living cells that these cells use
+to move around. Microtubules can be thought of as rigid rods continuously growing
+at the front end and slowly shrinking at the rear end, resulting in a net
+motion. I developed a C++ simulation used to investigate whether there exists a set of conditions of where randomly growing microtubules (rods) might self-organize to form a stable ordered state.
 
 ![Example ordered state](https://github.com/igor25/microtubules/blob/master/results/example_results_ordered_state_stable.gif)
 ![Example ordered to disordered ](https://github.com/igor25/microtubules/blob/master/results/example_results_order_to_disorder.gif)
@@ -15,7 +13,12 @@ in units $$um^-2$$ * sec^-1).
 
 ## Rod dynamics
 
-* **my collision / pass-through algorithm**:
+* **generation / growth**: This code simulates the microtubules as a number of rigid rods. These rods
+grow from the front end at a rate `vplus` (&mu;m/min) and shrink from the rear
+end at a rate `vmin`. New rods are generated on the screen at a rate of `rInj`
+in units &mu;m<sup>-2</sup>sec<sup>-1</sup>.
+
+* **collision / pass-through algorithm**:
    As rods grow, they can interact by either (i) colliding with each other and
    halting their growth as long as their front end is obstructed by another
    rod, or (ii) passing through another rod. The probabilities of (i) and (ii)
