@@ -54,4 +54,4 @@ order parameter is defined as the average of z= exp(i\*&theta;) in each square w
 &theta; is the angle of each rod.
 For the case where ordered state is decaying, the first three moments of this order parameter (mean, standard deviation and skewness) are shown in the plot below.
 
-<p align="center"></img https://github.com/igor25/microtubules/blob/master/results/disordered_to_ordered_moments.png></p>
+<p align="center"><img src="https://github.com/igor25/microtubules/blob/master/results/disordered_to_ordered_moments.png" /></p>
