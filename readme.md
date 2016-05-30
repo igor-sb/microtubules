@@ -52,6 +52,6 @@ Sethna 'Statistical physics, order parameters and complexity'). The entire
 system is first coarse-grained into a grid of 2<sup>`fftPowerOfTwo`</sup> squares, the
 order parameter is defined as the average of z= exp(i\*&theta;) in each square where
 &theta; is the angle of each rod.
-The first three moments of this order parameter (mean, standard deviation and skewness) are shown in the plot below.
+For the case where ordered state is decaying, the first three moments of this order parameter (mean, standard deviation and skewness) are shown in the plot below.
 
 ![Example moments](https://github.com/igor25/microtubules/blob/master/results/disordered_to_ordered_moments.png)
