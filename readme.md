@@ -9,7 +9,9 @@ grow from the front end at a rate `vplus` (um/min) and shrink from the rear
 end at a rate `vmin`. New rods are generated on the screen at a rate of `rInj`
 in units $$um^-2$$ * sec^-1).
 
-![Output sample](https://github.com/igor25/microtubules/blob/master/example_results_ordered_state_stable.gif)
+![Example ordered state](https://github.com/igor25/microtubules/blob/master/results/example_results_ordered_state_stable.gif)
+![Example ordered to disordered ](https://github.com/igor25/microtubules/blob/master/results/example_results_order_to_disorder.gif)
+![Example disordered state]https://github.com/igor25/microtubules/blob/master/results/example_results_disorder_state.gif)
 
 ## Rod dynamics
 
