@@ -1,0 +1,3 @@
+ordered_state_stable:   vc_rods_sol\vc_rods_pro2\runs_v61\initOrient_20k_steps_box10
+disordered_state:       vc_rods_sol\vc_rods_pro2\runs\gfx\optimized
+ordered_to_disordered:  vc_rods_sol\vc_rods_pro2\runs\v61_20ksteps_1dt_startOrdered\optimized
