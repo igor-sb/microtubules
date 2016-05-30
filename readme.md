@@ -2,10 +2,10 @@
 
 _(dedicated to late prof. Chris Henley at Cornell who supervised this project)_
 
-Microtubules are structural polymers inside living cells that these cells use
+Microtubules are structural polymers inside living cells that cells use
 to move around. Microtubules can be thought of as rigid rods continuously growing
 at the front end and slowly shrinking at the rear end, resulting in a net
-motion. I developed a C++ simulation used to investigate whether there exists a set of conditions of where randomly growing microtubules (rods) might self-organize to form a stable ordered state.
+displacement towards the inner side of cell membrane and pushing it outwards. I wrote a C++ 2D simulation used to investigate whether there exists a set of conditions where randomly growing microtubules (rods) might self-organize to form a stable ordered state. Some results are shown below.
 
 ![Example ordered state](https://github.com/igor25/microtubules/blob/master/results/example_results_ordered_state_stable.gif)
 ![Example ordered to disordered ](https://github.com/igor25/microtubules/blob/master/results/example_results_order_to_disorder.gif)
@@ -21,7 +21,7 @@ in units &mu;m<sup>-2</sup>sec<sup>-1</sup>.
 * **collision / pass-through algorithm**:
    As rods grow, they can interact by either (i) colliding with each other and
    halting their growth as long as their front end is obstructed by another
-   rod, or (ii) passing through another rod. The probabilities of (i) and (ii)
+   rod, or (ii) passing through another rod. I wrote The probabilities of (i) and (ii)
    are controlled through variables `lBundlingProb` and `rBundlingProb` which
    set the probabilities of rods passing through other rods if they encounter
    it from left or right, respectively.
@@ -38,17 +38,20 @@ Rods are generated in random directions if `startOriented == false`. If this
 is true then the rods are generated using Normal distribution with the mean
 `startTheta` and standard deviation `startThetaSpread`. `kSwitch` controls
 the step number at which we stop generating rods from the Normal distribution
-and switch to uniformly random.
+and switch to the uniform.
 
 ## Boundary conditions
 
-This simulation uses exclusively square periodic boundary bonditions.
+This simulation uses exclusively square periodic boundary conditions.
 
-## Quantification of the order of the entire system
+## The level of order / order parameters
 
 The level of order in this system is quantified using a coarse-grained
 ordered parameters (see e.g. the statistical physics textbook from Jim
-Sethna 'Statistical physics, order paramters and complexity'). The entire
-system is first coarse-grained into a grid of 2^fftPowerOfTwo squares, the
-order parameter is defined as the average of r*exp(i*theta) in each square.
-We plot the first and second moment of this order parameter.
+Sethna 'Statistical physics, order parameters and complexity'). The entire
+system is first coarse-grained into a grid of 2<sup>`fftPowerOfTwo`</sup> squares, the
+order parameter is defined as the average of z= exp(i\*&theta;) in each square where
+&theta; is the angle of each rod.
+The first and second moment of this order parameter are shown in the plot below.
+
+![Example moments](https://github.com/igor25/microtubules/blob/master/results/disordered_to_ordered_moments.png)
