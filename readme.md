@@ -28,8 +28,8 @@ in units &mu;m<sup>-2</sup>sec<sup>-1</sup>.
 
 * **bundling**:
    If `bundling` is true, whenever a rod hits another rod, it will not stop
-   growing. Instead it will continue growing 'alongside' the encountered rod,
-   forming an obtuse angle with its original direction, e.g. \\_ .
+   growing. Instead it will continue growing 'alongside' the encountered rod, i.e.
+  along the direction of the rod that was hit.
 
 
 ## Initial conditions
