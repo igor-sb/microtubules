@@ -13,7 +13,7 @@ displacement towards the inner side of cell membrane and pushing it outwards. I 
 
 ## Rod dynamics
 
-* **generation / growth**: This code simulates the microtubules as a number of rigid rods. These rods
+* **generation / growth**: This code simulates the microtubules as a number of rigid rods. The rods
 grow from the front end at a rate `vplus` (&mu;m/min) and shrink from the rear
 end at a rate `vmin`. New rods are generated on the screen at a rate of `rInj`
 in units &mu;m<sup>-2</sup>sec<sup>-1</sup>.
