@@ -21,7 +21,7 @@ in units &mu;m<sup>-2</sup>sec<sup>-1</sup>.
 * **collision / pass-through algorithm**:
    As rods grow, they can interact by either (i) colliding with each other and
    halting their growth as long as their front end is obstructed by another
-   rod, or (ii) passing through another rod. I wrote The probabilities of (i) and (ii)
+   rod, or (ii) passing through another rod. The probabilities of (i) and (ii)
    are controlled through variables `lBundlingProb` and `rBundlingProb` which
    set the probabilities of rods passing through other rods if they encounter
    it from left or right, respectively.
