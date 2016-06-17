@@ -1,0 +1,17 @@
+// To do:
+// -----
+// - make a pause and resume option. create vcrods_partial.dat at the beginning;
+//   delete at the end if the file exists start resume. file will contain all
+//   the (starting parameters and) variables.
+//
+
+// Change log:
+// ----------
+// v6.3 changelog: to do: add resume option, add option so that the rod has probability of
+//					passing through or bundling and make it with some probability
+// v6.2 changelog: added bundling option, also startOriented
+// v6.1 changeLog: added order parameters; output is in phi_moments.txt
+// v6 changeLog: Adding finite depolymerization rate instead of random deletion.
+// v5 changelog: Changed rods from <int, vec<dbl>> to <int, vec<vec<dbl>>>
+//				 to accomodate periodic boundary conditions and possibility of having
+//				 many rod segments.

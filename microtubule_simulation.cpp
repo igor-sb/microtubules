@@ -41,24 +41,6 @@
 //   We plot the first and second moment of this order parameter.
 
 
-// To do:
-// -----
-// - make a pause and resume option. create vcrods_partial.dat at the beginning;
-//   delete at the end if the file exists start resume. file will contain all
-//   the (starting parameters and) variables.
-//
-
-// Change log:
-// ----------
-// v6.3 changelog: to do: add resume option, add option so that the rod has probability of
-//					passing through or bundling and make it with some probability
-// v6.2 changelog: added bundling option, also startOriented
-// v6.1 changeLog: added order parameters; output is in phi_moments.txt
-// v6 changeLog: Adding finite depolymerization rate instead of random deletion.
-// v5 changelog: Changed rods from <int, vec<dbl>> to <int, vec<vec<dbl>>>
-//				 to accomodate periodic boundary conditions and possibility of having
-//				 many rod segments.
-
 static double dsqrarg;
 #define DSQR(a) ((dsqrarg=(a)) == 0.0 ? 0.0 : dsqrarg*dsqrarg)
 
@@ -80,7 +62,7 @@ using namespace std;
 #define PI 3.141592653589793
 #define TWOPI 6.283185307179586
 #define PIHALF 1.570796326794897
-#define DEBUG false
+#define DEBUG false // setting this to TRUE will display rod growth numbers in stdout
 #define startOriented true
 #define bundling true
 
@@ -95,18 +77,18 @@ double winSize = boxSize/screenUnit; // 300 screen unit
 double precision = 1e-5;
 
 // Declare functions used in main()
-void	snapshotPs(map <unsigned int, vector<vector<double> > > rods, const char * fileName, unsigned int k);
-void	outputParams(bool toFile);
-void	rodSegmentCreate(unsigned int rIdx, double x0, double x1, double y0, double y1, double phi, double status, double clock);
+void		snapshotPs(map <unsigned int, vector<vector<double> > > rods, const char * fileName, unsigned int k);
+void		outputParams(bool toFile);
+void 		rodSegmentCreate(unsigned int rIdx, double x0, double x1, double y0, double y1, double phi, double status, double clock);
 double	rodDistance(vector<double> rodsJ, vector<double> rodsL);
 double	rodHitAngle(vector<double> rodsJ, vector<double> rodsL);
-void	rodGrow(unsigned int rIdx, unsigned int m, double len);
-void	rodShrink(unsigned int rIdx, double len);
+void		rodGrow(unsigned int rIdx, unsigned int m, double len);
+void		rodShrink(unsigned int rIdx, double len);
 double	rodLength(unsigned int rIdx);
-double  rodSegLength(unsigned int rIdx, unsigned int sIdx);
-double  rodAngle(unsigned int rIdx, unsigned int sIdx);
-double  rodAngle2(vector<double> rod);
-void	gridInit(unsigned int fftPowerOfTwo, double len);
+double  	rodSegLength(unsigned int rIdx, unsigned int sIdx);
+double  	rodAngle(unsigned int rIdx, unsigned int sIdx);
+double  	rodAngle2(vector<double> rod);
+void		gridInit(unsigned int fftPowerOfTwo, double len);
 double	complexAbs(vector<double>);
 map<unsigned int, double> orderMoments(unsigned int m); // calculate order phiMoment_m
 
@@ -117,33 +99,33 @@ int main() {
 	//
 
 	// simulation parameters
-	double		   dt		= 0.1;		// Time step in min; default 0.1
-	unsigned int   steps    = 10000;	// Number of steps to run the simulation
-	unsigned int   dsstep   = 100;	    // Status display step
-	unsigned int   psstep   = 50;		// print .ps file every psstep-th step
-	unsigned int   pMstep   = 50;		// calculate phiMoment every pMstep-th step
-	double		 startTheta = 1.5708;	// starting orientation (if startOriented == true) (1.5708 = PI/2)
-	double startThetaSpread = 0.05;		// Gaussian spread around the startTheta.
-	unsigned int   kSwitch  = 3000;		// step at which we switch from ordered to random generation
-										//  in case we start oriented=true
-	unsigned int   phi_m    = 2;
-	char		   phi_mFname[23] = "phi_moments.txt";
-	double		   pfix     = 1;		// distance between collided rods (to easier recalculate distance
-										//  for rechecking when other rod is shrinking)
-	unsigned int fftPowerOfTwo = 8;		// 2^fftPowerOfTwo points for FFT
+	double		dt			= 0.1;	// Time step in min; default 0.1
+	unsigned int	steps			= 10000;	// Number of steps to run the simulation
+	unsigned int	dsstep		= 100;	// Status display step
+	unsigned int	psstep		= 50;		// print .ps file every psstep-th step
+	unsigned int	pMstep		= 50;		// calculate phiMoment every pMstep-th step
+	double		startTheta 		= 1.5708;	// starting orientation (if startOriented == true) (1.5708 = PI/2)
+	double 		startThetaSpread 	= 0.05;	// Gaussian spread around the startTheta.
+	unsigned int   	kSwitch  		= 3000;	// step at which we switch from ordered to random generation
+									//  in case we start oriented=true
+	unsigned int	phi_m    		= 2;
+	char		   	phi_mFname[23] 	= "phi_moments.txt";
+	double		pfix     		= 1;		// distance between collided rods (to easier recalculate distance
+									//  for rechecking when other rod is shrinking)
+	unsigned int 	fftPowerOfTwo 	= 8;		// 2^fftPowerOfTwo points for FFT
 
 	// open files for writing statistical moments of the order parameter
 	ofstream phiMomentsFile;
 	phiMomentsFile.open(phi_mFname);
 
 	// model parameters
-	double rInj				= 0.0005;	// rate of injenction per sec per um^2 (def. 1)
-	double rc				= rInj*dt*pow(screenUnit*winSize,2); // Rate of creation of new rods/min/entire area
-	double vmin				= 0.3;		// Rate of depolymerization of - end (in um/min)
-	double vplus			= 1.0;		// Rate of polymerization of + end (in um/min)
-	double bundlingAngle	= PI/6;		// 30 degrees; from [1], p. 110
-	double bundlingDistance	= 1;		// arbitrary, has to be small
-	double lBundlingProb	= 1;		// lBundling
+	double rInj			= 0.0005;			// rate of injenction per sec per um^2 (def. 1)
+	double rc			= rInj*dt*pow(screenUnit*winSize,2); // Rate of creation of new rods/min/entire area
+	double vmin			= 0.3;			// Rate of depolymerization of - end (in um/min)
+	double vplus		= 1.0;			// Rate of polymerization of + end (in um/min)
+	double bundlingAngle	= PI/6;			// 30 degrees; from [1], p. 110
+	double bundlingDistance	= 1;				// arbitrary, has to be small
+	double lBundlingProb	= 1;				// lBundling
 	double rBundlingProb	= 0;
 
 	// derived model parameters
@@ -163,16 +145,17 @@ int main() {
 	map <unsigned int, vector<unsigned int> > inters;
 	map <unsigned int, unsigned int> rodsB;	// for each rod (key), write which one blocked it (value)
 
+	// Initialize random number generator
 	int randSeed = 5345;
 	Ran random(randSeed);
 	Normaldev ranGauss(startTheta, startThetaSpread, randSeed);
 	//srand(randSeed); // debug random seed
 
 	double dr   = vplus*dt;
+
 	// make first rod
 	double rnd = random.doub();
 	double phi, x1, y1, x2, y2, rndLR, bundlingNewAngle;
-
 	if (startOriented) {
 		phi  = ranGauss.dev()*TWOPI;              // starting growth direction
 		if (random.doub()<0.5) {
@@ -192,10 +175,10 @@ int main() {
 
 	double Dx, Dy, d;
 	double shLen;
-  double newrodsRand;
+	double newrodsRand;
 	double bNx1, bNy1;
 
-  unsigned int i,j,k,l,vv;
+	unsigned int i,j,k,l,vv;
 	map<unsigned int, vector<vector<double> > >::iterator jit, lit;
 	map<unsigned int, unsigned int>::iterator nit;
 	vector<unsigned int>::iterator iit, mit;
@@ -205,21 +188,26 @@ int main() {
 	char fname[23];
 	int tmp = 0;
 	vector<double> tmp2, vec;
-	// grid
+	// Initialize coarse-grained grid for calculating order parameter
 	map<vector<int>, vector<double> > gridTh;
 	map<vector<int>, vector<double> >::iterator git;
 
 	cout << "Microtubule simulation: Starting V6.2..." << endl;
 
 	// main loop
+	// each k is a different time point
 	for (k=0; k<steps; k++) {
 
+		// Display progress bar
 		if (k % dsstep == 0) cout << ((double)k/(double)steps)*100 << "% completed." << endl;
+
+		// Output an eps graphic file every 'psstep'
 		if (k % psstep == 0) {
 			tmp = k / psstep;
 			sprintf(fname, "gfx/snapshot_%0.5d.eps", tmp); // k == step
 			snapshotPs(rods,fname,k);
 		}
+
 		newrodsRand = random.doub();
 		if (newrodsRand < rc*dt) {
 			if (k<=kSwitch && startOriented) {
@@ -261,7 +249,7 @@ int main() {
 				if (DEBUG) cout << "step: " << k << ", rod j: " << j << " (" << rods[j][m][0] << ","
 					<< rods[j][m][2] << "),(" << rods[j][m][1] << "," << rods[j][m][3] << ")" << endl;
 
-				// check the distance to other rods
+				// check the distance from rod j to other rods (l)
 				for (lit=rods.begin(); lit!=rods.end(); ++lit) {
 
 					l = lit->first;
@@ -306,7 +294,6 @@ int main() {
 
 					// first check from which side is the rod (j?) hitting
 					int leftright = 0;
-					if
 					// to do: correct L-R check; use leftright +-1
 					rndLR = random.doub();
 					cout << "random number is: " << rndLR << endl;
@@ -422,16 +409,17 @@ int main() {
 	            rods[j][m][6]++; // update rod's internal "clock"
 			}
 
-			// Shrink rods here
-			// ----------------
+			// ----------------------------------------------------------------------
+			//                            Shrink rods here
+			// ----------------------------------------------------------------------
 			//  * every time we shrink a rod, check whether it was blocking any other rod
 			//  * if it was, check if it is still blocking all of them
 			//  *  if any of them is unblocked change its state [5] = 1;
 			shLen = vmin*dt;
 			rodShrink(j, shLen);
 
-			if (inters[j].size() != 0) { // if this rod blocks/was blocking any other rods
-
+			if (inters[j].size() != 0) { 	// if this rod blocks/was blocking any other rods
+                                          	// they can now resume growth.
 				for (iit=inters[j].begin(); iit!=inters[j].end(); ++iit) { // go through all others that its blocking
 					// check if it is still blocking each one
 					i = *iit;
@@ -480,6 +468,10 @@ int main() {
 			} // end if this rod blocks other rods
 
 		} // end for j loop
+
+		// -----------------------------------------------------------
+		//            Write order parameter moments to file
+		//------------------------------------------------------------
 		if (k % pMstep == 0) {
 			tmp = k/pMstep;
 			map<unsigned int, double> kMoments = orderMoments(phi_m);
@@ -637,7 +629,7 @@ double rodAngle2(vector<double> rod) {
 
 void snapshotPs(map <unsigned int, vector<vector<double> > > rods, const char * fileName, unsigned int k) {
 	//
-	//  Write the instantaneous state of the rods (microtubules) in the EPS file.
+	//  Write the instantaneous state of the rods (microtubules) to the EPS file.
 	//
 	ofstream outFile;
 	outFile.open(fileName);
@@ -699,10 +691,10 @@ void snapshotPs(map <unsigned int, vector<vector<double> > > rods, const char * 
 
 
 double rodDistance(vector<double> rodsJ, vector<double> rodsL) {
-
+	//
 	// Calcualte distance between two rods if they will intersect as rodJ is growing from its end.
-	// If they won't this function returns -1.0
-
+	// If they won't intersect, this function returns -1.0
+	//
 	// rodsL is a vector containing possible multiple elements (rod segments)
 	// so we need to check whether it can hit either of those.
 	double h1x,h1y,h2x,h2y,phi1,phi2,phii,k1,l1,k2,l2,Dk,intX,intY,d;
@@ -818,7 +810,7 @@ double rodHitAngle(vector<double> rodsJ, vector<double> rodsL) {
 
 void gridInit(unsigned int fftPowerOfTwo, double len) {
 	//
-  // Initialize the coarse-grained grid for calculating the order parameter.
+	// Initialize the coarse-grained grid for calculating the order parameter.
 	//
 	map <vector<int>, vector<double> >::iterator git; // grid iterator
 	unsigned int n = (unsigned int)pow(2.0, (double)fftPowerOfTwo);
