@@ -77,18 +77,18 @@ double winSize = boxSize/screenUnit; // 300 screen unit
 double precision = 1e-5;
 
 // Declare functions used in main()
-void		snapshotPs(map <unsigned int, vector<vector<double> > > rods, const char * fileName, unsigned int k);
-void		outputParams(bool toFile);
-void 		rodSegmentCreate(unsigned int rIdx, double x0, double x1, double y0, double y1, double phi, double status, double clock);
+void 	snapshotPs(map <unsigned int, vector<vector<double> > > rods, const char * fileName, unsigned int k);
+void	outputParams(bool toFile);
+void 	rodSegmentCreate(unsigned int rIdx, double x0, double x1, double y0, double y1, double phi, double status, double clock);
 double	rodDistance(vector<double> rodsJ, vector<double> rodsL);
 double	rodHitAngle(vector<double> rodsJ, vector<double> rodsL);
-void		rodGrow(unsigned int rIdx, unsigned int m, double len);
-void		rodShrink(unsigned int rIdx, double len);
+void 	rodGrow(unsigned int rIdx, unsigned int m, double len);
+void 	rodShrink(unsigned int rIdx, double len);
 double	rodLength(unsigned int rIdx);
 double  	rodSegLength(unsigned int rIdx, unsigned int sIdx);
 double  	rodAngle(unsigned int rIdx, unsigned int sIdx);
 double  	rodAngle2(vector<double> rod);
-void		gridInit(unsigned int fftPowerOfTwo, double len);
+void 	gridInit(unsigned int fftPowerOfTwo, double len);
 double	complexAbs(vector<double>);
 map<unsigned int, double> orderMoments(unsigned int m); // calculate order phiMoment_m
 
@@ -99,38 +99,38 @@ int main() {
 	//
 
 	// simulation parameters
-	double		dt			= 0.1;	// Time step in min; default 0.1
-	unsigned int	steps			= 10000;	// Number of steps to run the simulation
-	unsigned int	dsstep		= 100;	// Status display step
-	unsigned int	psstep		= 50;		// print .ps file every psstep-th step
-	unsigned int	pMstep		= 50;		// calculate phiMoment every pMstep-th step
-	double		startTheta 		= 1.5708;	// starting orientation (if startOriented == true) (1.5708 = PI/2)
-	double 		startThetaSpread 	= 0.05;	// Gaussian spread around the startTheta.
-	unsigned int   	kSwitch  		= 3000;	// step at which we switch from ordered to random generation
+	double dt = 0.1;			// Time step in min; default 0.1
+	unsigned int steps = 10000;	// Number of steps to run the simulation
+	unsigned int dsstep = 100;	// Status display step
+	unsigned int psstep = 50;	// print .ps file every psstep-th step
+	unsigned int pMstep = 50;	// calculate phiMoment every pMstep-th step
+	double startTheta = 1.5708;	// starting orientation (if startOriented == true) (1.5708 = PI/2)
+	double startThetaSpread = 0.05;	// Gaussian spread around the startTheta.
+	unsigned int kSwitch = 3000;	// step at which we switch from ordered to random generation
 									//  in case we start oriented=true
-	unsigned int	phi_m    		= 2;
-	char		   	phi_mFname[23] 	= "phi_moments.txt";
-	double		pfix     		= 1;		// distance between collided rods (to easier recalculate distance
+	unsigned int phi_m = 2;
+	char phi_mFname[23] = "phi_moments.txt";
+	double pfix = 1;		// distance between collided rods (to easier recalculate distance
 									//  for rechecking when other rod is shrinking)
-	unsigned int 	fftPowerOfTwo 	= 8;		// 2^fftPowerOfTwo points for FFT
+	unsigned int fftPowerOfTwo = 8;		// 2^fftPowerOfTwo points for FFT
 
 	// open files for writing statistical moments of the order parameter
 	ofstream phiMomentsFile;
 	phiMomentsFile.open(phi_mFname);
 
 	// model parameters
-	double rInj			= 0.0005;			// rate of injenction per sec per um^2 (def. 1)
-	double rc			= rInj*dt*pow(screenUnit*winSize,2); // Rate of creation of new rods/min/entire area
-	double vmin			= 0.3;			// Rate of depolymerization of - end (in um/min)
-	double vplus		= 1.0;			// Rate of polymerization of + end (in um/min)
-	double bundlingAngle	= PI/6;			// 30 degrees; from [1], p. 110
+	double rInj	= 0.0005;			// rate of injenction per sec per um^2 (def. 1)
+	double rc = rInj*dt*pow(screenUnit*winSize,2); // Rate of creation of new rods/min/entire area
+	double vmin = 0.3;			// Rate of depolymerization of - end (in um/min)
+	double vplus = 1.0;			// Rate of polymerization of + end (in um/min)
+	double bundlingAngle = PI/6;			// 30 degrees; from [1], p. 110
 	double bundlingDistance	= 1;				// arbitrary, has to be small
-	double lBundlingProb	= 1;				// lBundling
-	double rBundlingProb	= 0;
+	double lBundlingProb = 1;				// lBundling
+	double rBundlingProb = 0;
 
 	// derived model parameters
-	double lContinueProb	= 1-lBundlingProb; // probability of "going through" from left
-	double rContinueProb	= 1-rBundlingProb;
+	double lContinueProb = 1-lBundlingProb; // probability of "going through" from left
+	double rContinueProb = 1-rBundlingProb;
 
 	// [1] D. W. Ehrhardt, \Straighten up and
 	// y right-microtubule dynamics and organization of non-
@@ -157,19 +157,19 @@ int main() {
 	double rnd = random.doub();
 	double phi, x1, y1, x2, y2, rndLR, bundlingNewAngle;
 	if (startOriented) {
-		phi  = ranGauss.dev()*TWOPI;              // starting growth direction
+		phi = ranGauss.dev()*TWOPI;              // starting growth direction
 		if (random.doub()<0.5) {
 			if (phi < PI) phi += PI;
 			else phi -= PI;
 		}
 	}
 	else {
-		phi  = random.doub()*TWOPI;              // starting growth direction
+		phi = random.doub()*TWOPI;              // starting growth direction
 	}
-	x1   = random.doub()*winSize;
-	y1   = random.doub()*winSize;
-	x2   = x1 + dr*cos(phi);
-	y2   = y1 + dr*sin(phi);
+	x1 = random.doub()*winSize;
+	y1 = random.doub()*winSize;
+	x2 = x1 + dr*cos(phi);
+	y2 = y1 + dr*sin(phi);
 	unsigned int rodsI = 0;
 	rodSegmentCreate(rodsI, x1, x1, y1, y1, phi, 1, 0);
 
@@ -242,9 +242,9 @@ int main() {
 			if (rods[j][m][5] == 1) { // only check rods that are growing
 
 				// data for the rod that is the closest one.
-				int		lMin = -1;
-				int		mMin = -1;
-				double	dMin = -1;
+				int lMin = -1;
+				int mMin = -1;
+				double dMin = -1;
 
 				if (DEBUG) cout << "step: " << k << ", rod j: " << j << " (" << rods[j][m][0] << ","
 					<< rods[j][m][2] << "),(" << rods[j][m][1] << "," << rods[j][m][3] << ")" << endl;
