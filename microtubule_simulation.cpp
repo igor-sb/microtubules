@@ -85,9 +85,9 @@ double	rodHitAngle(vector<double> rodsJ, vector<double> rodsL);
 void 	rodGrow(unsigned int rIdx, unsigned int m, double len);
 void 	rodShrink(unsigned int rIdx, double len);
 double	rodLength(unsigned int rIdx);
-double  	rodSegLength(unsigned int rIdx, unsigned int sIdx);
-double  	rodAngle(unsigned int rIdx, unsigned int sIdx);
-double  	rodAngle2(vector<double> rod);
+double	rodSegLength(unsigned int rIdx, unsigned int sIdx);
+double	rodAngle(unsigned int rIdx, unsigned int sIdx);
+double	rodAngle2(vector<double> rod);
 void 	gridInit(unsigned int fftPowerOfTwo, double len);
 double	complexAbs(vector<double>);
 map<unsigned int, double> orderMoments(unsigned int m); // calculate order phiMoment_m
